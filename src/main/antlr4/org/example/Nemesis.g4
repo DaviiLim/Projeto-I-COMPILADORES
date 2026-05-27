@@ -4,6 +4,15 @@ options {
     caseInsensitive = true;
 }
 
+@lexer::members {
+    private void erroLexico() {
+        throw new RuntimeException(
+            "Erro! Linha " + getLine() +
+            "\nColuna " + getCharPositionInLine()
+        );
+    }
+}
+
 // REGRAS DO PARSER
 
 prog     : PROGRAM IDENTIFIER PVIG decls cmdComp PONTO ;
@@ -65,7 +74,7 @@ termo    : termo OPAD fator
 fator    : fator OPMULT lego
          | lego
          ;
-// criei essa regra pois ela literalemnte será usada como lego para se encaixar onde precisar
+
 lego      : IDENTIFIER
          | CTE
          | TRUE
@@ -146,10 +155,5 @@ COMENTARIO : '/' ~[/]* '/' -> skip ;
 ESPACO : [ \t\n\r]+ -> skip ;
 
 ERRO : .
-    {
-        throw new RuntimeException(
-            "Erro! Linha " + getLine() +
-            "\nColuna " + getCharPositionInLine()
-        );
-    }
+    { erroLexico(); }
 ;
