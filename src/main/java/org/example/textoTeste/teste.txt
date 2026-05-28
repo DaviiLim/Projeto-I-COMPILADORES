@@ -1,0 +1,3 @@
+program teste;
+    x := 10
+end.
