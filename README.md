@@ -26,9 +26,18 @@
 - Erro léxico -> parar a execução e indicar na tela qual foi a linha 
   e/ou coluna que está o erro. Feito
 - Sucesso -> deve imprimir os tokens identificados juntamente
-  com seu tipo e valor do atributo. em andamento
+  com seu tipo e valor do atributo. Feito
+
+## Análise Sintática
+- Declaração de não-terminais. Feito
+- Resolução de conflitos na gramática. Feito
+- Modificações necessárias na gramática. Feito
 
 # Como executar
+Basta adicionar um txt com tokens que sigam a regra da gramática.
+Caso o token não exista ou a gramática possuir algum erro, o código parará e indicará que há erros!
+Atualmente existe uma pasta chamada "textoTeste" que carrega um arquivo "teste.txt".
+É necessário configurar Run para rodar seu teste.
 
 ## O que foi usado
 - JDK 21
