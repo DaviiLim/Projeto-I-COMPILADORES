@@ -17,23 +17,40 @@ public class Main {
         tokens.fill();
 
         for (Token t : tokens.getTokens()) {
+
             if (t.getType() == Token.EOF) {
                 continue;
             }
+
+            String atributo = switch (t.getText().toLowerCase()) {
+                case "+" -> "MAIS";
+                case "-" -> "MENOS";
+                case "*" -> "VEZES";
+                case "/" -> "DIV";
+                case "or" -> "OR";
+                case "and" -> "AND";
+                case "~" -> "NEG";
+                case "<" -> "MENOR";
+                case "<=" -> "MENIG";
+                case ">" -> "MAIOR";
+                case ">=" -> "MAIG";
+                case "==" -> "IGUAL";
+                case "<>" -> "DIFER";
+
+                default -> t.getText();
+            };
+
+
             System.out.println(
                     "Informações sobre os token" + "\n"
-                    + "Tipo:" + t.getType()  + "\n"
-                    + "Texto:" + t.getText()  + "\n"
-                    + "Nome:" + NemesisLexer.VOCABULARY.getSymbolicName(t.getType())  + "\n"
+                    + "Token: " + t.getText()  + "\n"
+                    + "Atributo: " + atributo  + "\n"
+                    + "Tipo: " + NemesisLexer.VOCABULARY.getSymbolicName((t.getType())) + "\n"
 
             );
         }
 
         NemesisParser parser = new NemesisParser(tokens);
-
-        ParseTree tree = parser.prog();
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(new AnalisadorSemantico(), tree);
-
+        parser.prog();
     }
 }
