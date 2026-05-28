@@ -34,11 +34,14 @@
 - Modificações necessárias na gramática. Feito
 
 # Como executar
-Basta adicionar um txt com tokens que sigam a regra da gramática.
-Caso o token não exista ou a gramática possuir algum erro, o código parará e indicará que há erros!
-Atualmente existe uma pasta chamada "textoTeste" que carrega um arquivo "teste.txt".
-É necessário configurar Run para rodar seu teste.
+1. Basta adicionar um txt com tokens que sigam a regra da gramática na pasta "textoTeste".
+2. É necessário configurar Run para rodar seu teste.
+3. Se divirta! 
 
+# Observações
+1. Caso o token não exista ou a gramática possuir algum erro, o código parará e indicará que há erros!
+2. Atualmente existe uma pasta chamada "textoTeste" que carrega um arquivo "teste.txt".
+   
 ## O que foi usado
 - JDK 21
 - ANTLR4
