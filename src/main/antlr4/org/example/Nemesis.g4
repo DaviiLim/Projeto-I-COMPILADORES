@@ -59,29 +59,29 @@ elemW    : expr | CADEIA ;
 
 cmdAtrib : IDENTIFIER ATRIB expr ;
 
-expr     : expr OPLOG exprRel
-         | exprRel
+expr     : expr OPLOG exprOprel
+         | exprOprel
          ;
 
-exprRel  : exprRel OPREL termo
-         | termo
+exprOprel  : exprOprel OPREL exprOpad
+         | exprOpad
          ;
 
-termo    : termo OPAD fator
-         | fator
+exprOpad    : exprOpad  OPAD exprOpmult
+         | exprOpmult
          ;
 
-fator    : fator OPMULT lego
-         | lego
+exprOpmult    : exprOpmult OPMULT atomo
+         | atomo
          ;
 
-lego      : IDENTIFIER
+atomo      : IDENTIFIER
          | CTE
          | TRUE
          | FALSE
          | ABPAR expr FPAR
-         | OPNEG lego
-         | OPAD lego
+         | OPNEG atomo
+         | OPAD atomo
          ;
 
 // REGRAS DO LEXER
