@@ -146,7 +146,7 @@ CTE : [0-9]+
         }
     }
 ;
-// Aqui o CTE não está avaliando com o + ou com o -, mas eu resolvi isso com o lego  que aceita OPAD lego .
+// Aqui o CTE não está avaliando com o + ou com o -, mas eu resolvi isso com o atomo  que aceita OPAD atomo .
 
 CADEIA : '"' ~["]* '"' ;
 
