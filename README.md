@@ -35,8 +35,9 @@
 
 # Como executar
 1. Basta adicionar um txt com tokens que sigam a regra da gramática na pasta "textoTeste".
-2. É necessário configurar Run para rodar seu teste.
-3. Se divirta! 
+2. Colcar o maven para gerar a pasta target com a generated-sources
+3. É necessário configurar Run para rodar seu txt com o teste.
+4. Se divirta! 
 
 # Observações
 1. Caso o token não exista ou a gramática possuir algum erro, o código parará e indicará que há erros!
