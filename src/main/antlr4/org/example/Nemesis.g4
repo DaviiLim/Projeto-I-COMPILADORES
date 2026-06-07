@@ -5,10 +5,11 @@ options {
 }
 
 @lexer::members {
-    private void erroLexico() {
+    private void erroLexico(String mensagem) {
         throw new RuntimeException(
-            "Erro! Linha " + getLine() +
-            "\nColuna " + getCharPositionInLine()
+            "Deu erro! Linha: " + getLine() +
+            "\nColuna: " + getCharPositionInLine() +
+            "\nMensagem: " + mensagem
         );
     }
 }
@@ -137,12 +138,14 @@ IDENTIFIER : [a-zA-Z][a-zA-Z0-9]*
 
 CTE : [0-9]+
     {
-        int valor = Integer.parseInt(getText());
-        if (valor > 32767) {
-            throw new RuntimeException(
-                "Erro! Linha " + getLine() +
-                "\nColuna " + getCharPositionInLine()
-            );
+        try {
+            int valor = Integer.parseInt(getText());
+
+            if (valor > 32767) {
+                erroLexico("O valor foi maior que 32767");
+            }
+        } catch (NumberFormatException e) {
+            erroLexico("Número inteiro inválido");
         }
     }
 ;
@@ -150,10 +153,10 @@ CTE : [0-9]+
 
 CADEIA : '"' ~["]* '"' ;
 
-COMENTARIO : '/' ~[/]* '/' -> skip ;
+COMENTARIO : '//' ~[\r\n]* -> skip ;
 
 ESPACO : [ \t\n\r]+ -> skip ;
 
 ERRO : .
-    { erroLexico(); }
+    { erroLexico("Erro! Algo foi escrito e colocado de forma errada!!" + getText()); }
 ;

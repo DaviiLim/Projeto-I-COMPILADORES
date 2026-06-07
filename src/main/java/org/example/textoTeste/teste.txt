@@ -1,3 +1,6 @@
-program teste;
-    x := 10
+program overflow;
+var
+  x : integer;
+begin
+  x := 99999999999
 end.
