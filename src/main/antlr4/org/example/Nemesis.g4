@@ -78,6 +78,7 @@ exprOpmult    : exprOpmult OPMULT atomo
 
 atomo      : IDENTIFIER
          | CTE
+         | CADEIA
          | TRUE
          | FALSE
          | ABPAR expr FPAR

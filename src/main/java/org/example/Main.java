@@ -43,9 +43,9 @@ public class Main {
 
             System.out.println(
                     "Informações sobre os token" + "\n"
-                    + "Token: " + t.getText()  + "\n"
-                    + "Atributo: " + atributo  + "\n"
-                    + "Tipo: " + NemesisLexer.VOCABULARY.getSymbolicName((t.getType())) + "\n"
+                            + "Token: " + t.getText()  + "\n"
+                            + "Atributo: " + atributo  + "\n"
+                            + "Tipo: " + NemesisLexer.VOCABULARY.getSymbolicName((t.getType())) + "\n"
 
             );
         }

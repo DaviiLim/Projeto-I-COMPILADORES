@@ -1,6 +1,34 @@
-program overflow;
+program teste;
+
 var
-  x : integer;
+   numero, contador : integer;
+   ativo, encontrado : boolean;
+   nome, mensagem : string;
+
 begin
-  x := 99999999999
+   nome := "DaviDaniel";
+   numero := 10;
+   contador := 0;
+   ativo := true;
+   encontrado := false;
+
+   read(numero);
+
+   while contador < numero do
+      begin
+         contador := contador + 1;
+         if contador > 5 and ativo == true then
+            mensagem := "passou de cinco"
+         else
+            mensagem := "ainda nao";
+
+         write("contador: ", contador)
+      end;
+
+   if ~encontrado then
+      write("nao encontrado")
+   else
+      write("encontrado: ", nome);
+
+   write("fim do programa", numero * 2 + 1)
 end.
