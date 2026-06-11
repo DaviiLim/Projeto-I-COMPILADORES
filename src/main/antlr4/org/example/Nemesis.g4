@@ -16,7 +16,7 @@ options {
 
 // REGRAS DO PARSER
 
-prog     : PROGRAM IDENTIFIER PVIG decls cmdComp PONTO ;
+prog     : PROGRAM ID PVIG decls cmdComp PONTO ;
 
 decls    : VAR listDecl
          |
@@ -28,8 +28,8 @@ listDecl : declTip
 
 declTip  : listId DPONTOS tip PVIG ;
 
-listId   : IDENTIFIER
-         | IDENTIFIER VIG listId
+listId   : ID
+         | ID VIG listId
          ;
 
 tip      : INTEGER | BOOLEAN | STRING ;
@@ -58,33 +58,32 @@ listW    : elemW
 
 elemW    : expr | CADEIA ;
 
-cmdAtrib : IDENTIFIER ATRIB expr ;
+cmdAtrib : ID ATRIB expr ;
 
 expr     : expr OPLOG exprOprel
          | exprOprel
          ;
 
-exprOprel  : exprOprel OPREL exprOpad
+exprOprel : exprOprel OPREL exprOpad
          | exprOpad
          ;
 
-exprOpad    : exprOpad  OPAD exprOpmult
+exprOpad  : exprOpad  OPAD exprOpmult
          | exprOpmult
          ;
 
-exprOpmult    : exprOpmult OPMULT atomo
+exprOpmult : exprOpmult OPMULT atomo
          | atomo
          ;
 
-atomo      : IDENTIFIER
-         | CTE
-         | CADEIA
-         | TRUE
-         | FALSE
-         | ABPAR expr FPAR
-         | OPNEG atomo
-         | OPAD atomo
-         ;
+atomo : ID
+      | CTE
+      | TRUE
+      | FALSE
+      | ABPAR expr FPAR
+      | OPNEG atomo
+      | OPAD atomo
+      ;
 
 // REGRAS DO LEXER
 
@@ -129,7 +128,7 @@ ABPAR : '(';
 
 FPAR : ')';
 
-IDENTIFIER : [a-zA-Z][a-zA-Z0-9]*
+ID : [a-zA-Z][a-zA-Z0-9]*
     {
         if (getText().length() > 16) {
             setText(getText().substring(0, 16));
@@ -140,11 +139,7 @@ IDENTIFIER : [a-zA-Z][a-zA-Z0-9]*
 CTE : [0-9]+
     {
         try {
-            int valor = Integer.parseInt(getText());
-
-            if (valor > 32767) {
-                erroLexico("O valor foi maior que 32767");
-            }
+            Integer.parseInt(getText());
         } catch (NumberFormatException e) {
             erroLexico("Número inteiro inválido");
         }
