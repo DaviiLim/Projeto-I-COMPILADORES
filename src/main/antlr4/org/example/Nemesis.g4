@@ -40,11 +40,20 @@ listCmd  : cmd
          | cmd PVIG listCmd
          ;
 
-cmd      : cmdIf | cmdWhile | cmdRead | cmdWrite | cmdAtrib | cmdComp ;
+cmd : cmdFecha | cmdAbre ;
 
-cmdIf    : IF expr THEN cmd
-         | IF expr THEN cmd ELSE cmd
+cmdFecha : IF expr THEN cmdFecha ELSE cmdFecha
+         | WHILE expr DO cmdFecha
+         | cmdRead
+         | cmdWrite
+         | cmdAtrib
+         | cmdComp
          ;
+
+cmdAbre : IF expr THEN cmd
+        | IF expr THEN cmdFecha ELSE cmdAbre
+        | WHILE expr DO cmdAbre
+        ;
 
 cmdWhile : WHILE expr DO cmd ;
 
