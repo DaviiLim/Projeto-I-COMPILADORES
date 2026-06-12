@@ -139,6 +139,7 @@ FPAR : ')';
 ID : [a-zA-Z][a-zA-Z0-9]*
     {
         if (getText().length() > 16) {
+            System.out.println("AVISO!!!: identificador '" + getText() + "' cortado para 16 caracteres");
             setText(getText().substring(0, 16));
         }
     }

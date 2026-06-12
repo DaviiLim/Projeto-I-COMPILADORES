@@ -51,6 +51,16 @@ public class Main {
         }
 
         NemesisParser parser = new NemesisParser(tokens);
-        parser.prog();
+        NemesisParser.ProgContext tree = parser.prog();
+
+        Semantica semantica = new Semantica();
+
+        semantica.visit(tree);
+
+        GeradorCodigo gerador = new GeradorCodigo();
+        gerador.visit(tree);
+        for (Instrucao3AC instrucao : gerador.getInstrucoes()) {
+            System.out.println(instrucao);
+        }
     }
 }
