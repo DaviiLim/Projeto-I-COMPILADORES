@@ -1,6 +1,7 @@
 grammar Nemesis;
 
 options {
+    visitor = true;
     caseInsensitive = true;
 }
 
