@@ -142,14 +142,83 @@ public class GeradorCodigo extends NemesisBaseVisitor<String> {
 
     @Override
     public String visitCmdAbre(NemesisParser.CmdAbreContext ctx) {
+
+        if (ctx.WHILE() != null) {
+            String comeca = novoRotulo();
+            String termina = novoRotulo();
+
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.ROTULO, comeca, null, null, null));
+
+            String cond = visit(ctx.expr());
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.DESVIO_COND, termina, cond, null, null));
+
+            visit(ctx.cmdAbre());
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.DESVIO_INCOND, comeca, null, null, null));
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.ROTULO, termina, null, null, null));
+            return null;
+        }
+
+        if (ctx.ELSE() != null) {
+            String labelElse = novoRotulo();
+            String labelEnd = novoRotulo();
+
+            String cond = visit(ctx.expr());
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.DESVIO_COND, labelElse, cond, null, null));
+
+            visit(ctx.cmdFecha());
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.DESVIO_INCOND, labelEnd, null, null, null));
+
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.ROTULO, labelElse, null, null, null));
+            visit(ctx.cmdAbre());
+
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.ROTULO, labelEnd, null, null, null));
+            return null;
+        }
+
         String labelEnd = novoRotulo();
 
         String cond = visit(ctx.expr());
         instrucoes.add(new Instrucao3AC(TipoInstrucao.DESVIO_COND, labelEnd, cond, null, null));
 
-        visitChildren(ctx);
-
+        visit(ctx.cmd());
         instrucoes.add(new Instrucao3AC(TipoInstrucao.ROTULO, labelEnd, null, null, null));
         return null;
+    }
+
+    @Override
+    public String visitCmdRead(NemesisParser.CmdReadContext ctx) {
+        percorreListIdRead(ctx.listId());
+        return null;
+    }
+
+    private void percorreListIdRead(NemesisParser.ListIdContext ctx) {
+        String nome = ctx.ID().getText();
+        instrucoes.add(new Instrucao3AC(TipoInstrucao.CHAMADA_READ, null, nome, null, null));
+
+        if (ctx.listId() != null) {
+            percorreListIdRead(ctx.listId());
+        }
+    }
+
+    @Override
+    public String visitCmdWrite(NemesisParser.CmdWriteContext ctx) {
+        percorreListW(ctx.listW());
+        return null;
+    }
+
+    private void percorreListW(NemesisParser.ListWContext ctx) {
+        NemesisParser.ElemWContext elem = ctx.elemW();
+
+        if (elem.CADEIA() != null) {
+            String cadeia = elem.CADEIA().getText();
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.CHAMADA_WRITE, null, cadeia, null, null));
+        } else {
+            String resultado = visit(elem.expr());
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.CHAMADA_WRITE, null, resultado, null, null));
+        }
+
+        if (ctx.listW() != null) {
+            percorreListW(ctx.listW());
+        }
     }
 }

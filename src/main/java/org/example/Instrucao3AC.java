@@ -35,7 +35,7 @@ public class Instrucao3AC {
         } else if (tipo == TipoInstrucao.CHAMADA_READ) {
             return "READ(" + operando1 + ")";
         } else {
-            return "sem nada";
+            return "";
         }
     }
 }

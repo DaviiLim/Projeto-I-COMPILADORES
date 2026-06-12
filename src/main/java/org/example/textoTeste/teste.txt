@@ -1,9 +1,6 @@
 PROGRAM teste;
 VAR x : INTEGER;
 BEGIN
-    x := 0;
-    IF x < 10 THEN
-        x := 1
-    ELSE
-        x := 2
+    READ(x);
+    WRITE(x, "resultado")
 END.
