@@ -56,8 +56,6 @@ cmdAbre : IF expr THEN cmd
         | WHILE expr DO cmdAbre
         ;
 
-cmdWhile : WHILE expr DO cmd ;
-
 cmdRead  : READ ABPAR listId FPAR ;
 
 cmdWrite : WRITE ABPAR listW FPAR ;
