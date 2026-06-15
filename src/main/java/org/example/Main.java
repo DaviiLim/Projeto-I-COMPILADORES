@@ -18,7 +18,7 @@ public class Main {
         CharStream cs = CharStreams.fromFileName(args[0]);
         NemesisLexer lexer = new NemesisLexer(cs);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-
+        System.out.println("ANALISE LEXICA");
         tokens.fill();
 
         for (Token t : tokens.getTokens()) {
@@ -55,13 +55,16 @@ public class Main {
             );
         }
 
+        System.out.println("ANALISE SINTATICA");
         NemesisParser parser = new NemesisParser(tokens);
         parser.removeErrorListeners();
         parser.addErrorListener(new ErroListener());
         NemesisParser.ProgContext tree = parser.prog();
 
+
         Semantica semantica = new Semantica();
         semantica.visit(tree);
+        System.out.println("ANALISE SEMANTICA");
 
         System.out.println("");
         System.out.println("");
@@ -75,6 +78,7 @@ public class Main {
         System.out.println("");
         System.out.println("");
 
+        System.out.println("3AC DEPOIS DE FOLDING");
         OtimizadorCodigo otimizador = new OtimizadorCodigo();
         List<Instrucao3AC> otimizadas = otimizador.otimizar(gerador.getInstrucoes());
         for (Instrucao3AC instrucao : otimizadas) {
@@ -90,6 +94,7 @@ public class Main {
         var codigoRefolded = otimizador.otimizar(codigoConstante);
         var codigoSimplificado = otimizador.simplificarOperacoes(codigoRefolded);
         var semCodigoMorto = otimizador.eliminarCodigoMorto(codigoSimplificado);
+        System.out.println("CODIGO OTIMIZADO");
         for (Instrucao3AC instrucao : semCodigoMorto) {
             System.out.println(instrucao);
         }
@@ -102,9 +107,16 @@ public class Main {
 
         HashSet<String> temporarios = geradorAsm.coletarTemporarios(semCodigoMorto);
         StringBuilder dados = geradorAsm.gerarSecaoDados(semantica.getTabelaGlobal(), strings, temporarios);
+        System.out.println("ASSEMBLY");
         System.out.println(dados);
 
         StringBuilder codigoAsm = geradorAsm.gerarSecaoCodigo(semCodigoMorto, strings, semantica.getTabelaGlobal());
         System.out.println(codigoAsm);
+
+        String conteudoAsm = dados.toString() + "\n" + codigoAsm.toString();
+
+        java.nio.file.Path destino = java.nio.file.Path.of("src/main/java/org/example/textoAsm/saida.asm");
+        java.nio.file.Files.createDirectories(destino.getParent());
+        java.nio.file.Files.writeString(destino, conteudoAsm);
     }
 }

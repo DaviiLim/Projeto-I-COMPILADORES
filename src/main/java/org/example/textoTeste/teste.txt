@@ -1,8 +1,14 @@
-program testeBool;
+program otimiza;
+
 var
-   x : boolean;
+   a, b, c, d : integer;
+
 begin
-   read(x);
-   x := ~x;
-   write(x)
+   a := 8 + 2;
+   b := 3 * 4;
+   c := a + b;
+   d := c + 0;
+
+   write("Valor de D:");
+   write(d)
 end.
