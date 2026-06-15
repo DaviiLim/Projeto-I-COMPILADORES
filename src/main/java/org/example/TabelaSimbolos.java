@@ -17,15 +17,18 @@ public class TabelaSimbolos {
     }
 
     public void inserir(String nome, TipoSimbolo tipo) {
-       SimboloEntrada simbolo = new SimboloEntrada(nome, tipo, this.deslocamentoAtual);
-       this.tabelaSimbolo.put(nome, simbolo);
+        if (this.tabelaSimbolo.containsKey(nome)) {
+            throw new RuntimeException("Erro semântico - Variável '" + nome + "' já foi declarada");
+        }
 
-       if (tipo.equals(TipoSimbolo.BOOLEAN)){
-           this.deslocamentoAtual += 1;
-       }else {
-           this.deslocamentoAtual += 2;
-           // String vai ficar com 2 bytes por ora, revisar depois
-       }
+        SimboloEntrada simbolo = new SimboloEntrada(nome, tipo, this.deslocamentoAtual);
+        this.tabelaSimbolo.put(nome, simbolo);
+
+        if (tipo.equals(TipoSimbolo.BOOLEAN)){
+            this.deslocamentoAtual += 1;
+        }else {
+            this.deslocamentoAtual += 2;
+        }
     }
 
     public SimboloEntrada buscar(String nome) {

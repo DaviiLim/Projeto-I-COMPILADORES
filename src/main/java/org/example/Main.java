@@ -5,8 +5,10 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.example.NemesisLexer.*;
+import org.example.error.ErroListener;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -54,6 +56,8 @@ public class Main {
         }
 
         NemesisParser parser = new NemesisParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ErroListener());
         NemesisParser.ProgContext tree = parser.prog();
 
         Semantica semantica = new Semantica();
@@ -83,7 +87,8 @@ public class Main {
         List<Instrucao3AC> codigo = gerador.getInstrucoes();
         var codigoOtimizado = otimizador.otimizar(codigo);
         var codigoConstante = otimizador.propagarConstantes(codigoOtimizado);
-        var codigoSimplificado = otimizador.simplificarOperacoes(codigoConstante);
+        var codigoRefolded = otimizador.otimizar(codigoConstante);
+        var codigoSimplificado = otimizador.simplificarOperacoes(codigoRefolded);
         var semCodigoMorto = otimizador.eliminarCodigoMorto(codigoSimplificado);
         for (Instrucao3AC instrucao : semCodigoMorto) {
             System.out.println(instrucao);
@@ -95,7 +100,8 @@ public class Main {
         GeradorAssembly geradorAsm = new GeradorAssembly();
         HashMap<String, String> strings = geradorAsm.coletarStrings(semCodigoMorto);
 
-        StringBuilder dados = geradorAsm.gerarSecaoDados(semantica.getTabelaGlobal(), strings);
+        HashSet<String> temporarios = geradorAsm.coletarTemporarios(semCodigoMorto);
+        StringBuilder dados = geradorAsm.gerarSecaoDados(semantica.getTabelaGlobal(), strings, temporarios);
         System.out.println(dados);
 
         StringBuilder codigoAsm = geradorAsm.gerarSecaoCodigo(semCodigoMorto, strings, semantica.getTabelaGlobal());

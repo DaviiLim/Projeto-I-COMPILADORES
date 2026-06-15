@@ -142,9 +142,19 @@ public class Semantica extends NemesisBaseVisitor<TipoSimbolo> {
         if (ctx.OPREL() != null) {
             TipoSimbolo esquerdo = visit(ctx.exprOprel());
             TipoSimbolo direito = visit(ctx.exprOpad());
+
             if (esquerdo != direito) {
                 erroSemantico("Os dois lados devem ter o mesmo tipo");
             }
+
+            String op = ctx.OPREL().getText();
+
+            if (op.equals("<") || op.equals("<=") || op.equals(">") || op.equals(">=")) {
+                if (esquerdo != TipoSimbolo.INTEGER) {
+                    erroSemantico("Operadores <, <=, >, >= só aceitam INTEGER");
+                }
+            }
+
             return TipoSimbolo.BOOLEAN;
         }
         return visit(ctx.exprOpad());
@@ -208,10 +218,28 @@ public class Semantica extends NemesisBaseVisitor<TipoSimbolo> {
     @Override
     public TipoSimbolo visitCmdAbre(NemesisParser.CmdAbreContext ctx) {
         TipoSimbolo tipoCond = visit(ctx.expr());
-        if (tipoCond != TipoSimbolo.BOOLEAN) {
-            erroSemantico("IF deve ser BOOLEAN");
+
+        if (ctx.WHILE() != null) {
+            if (tipoCond != TipoSimbolo.BOOLEAN) {
+                erroSemantico("WHILE deve ser BOOLEAN");
+            }
+        } else {
+            if (tipoCond != TipoSimbolo.BOOLEAN) {
+                erroSemantico("IF deve ser BOOLEAN");
+            }
         }
-        return visitChildren(ctx);
+
+        if (ctx.cmdFecha() != null) {
+            visit(ctx.cmdFecha());
+        }
+
+        if (ctx.cmd() != null) {
+            visit(ctx.cmd());
+        }
+
+        visit(ctx.cmdAbre());
+
+        return null;
     }
 
     public TabelaSimbolos getTabelaAtual() {

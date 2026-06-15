@@ -50,7 +50,19 @@ public class GeradorCodigo extends NemesisBaseVisitor<String> {
         }
 
         if (ctx.OPAD() != null) {
-            return ctx.OPAD().getText() + ctx.atomo().CTE().getText();
+            if (ctx.atomo().CTE() != null) {
+                return ctx.OPAD().getText() + ctx.atomo().CTE().getText();
+            }
+
+            String val = visit(ctx.atomo());
+
+            if (ctx.OPAD().getText().equals("-")) {
+                String temp = novoTemp();
+                instrucoes.add(new Instrucao3AC(TipoInstrucao.OPERACAO, temp, "0", val, "-"));
+                return temp;
+            }
+
+            return val;
         }
 
         if (ctx.OPNEG() != null) {

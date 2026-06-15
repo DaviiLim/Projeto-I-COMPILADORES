@@ -29,7 +29,7 @@ public class OtimizadorCodigo {
         if (!isNumero(inst.operando1) || !isNumero(inst.operando2)) {
             return false;
         }
-        if (inst.operador.equals("/") && inst.operando2.equals("0")) {
+        if (inst.operador != null && inst.operador.equals("/") && "0".equals(inst.operando2)) {
             return false;
         }
         return true;
@@ -44,6 +44,8 @@ public class OtimizadorCodigo {
     }
 
     private String fazerCalculo(int v1, int v2, String operador) {
+        if (operador == null) return "0";
+
         if (operador.equals("-")) {
             return String.valueOf(v1 - v2);
         }
@@ -79,6 +81,7 @@ public class OtimizadorCodigo {
     }
 
     private boolean isNumero(String s) {
+        if (s == null) return false;
         try {
             Integer.parseInt(s);
             return true;
@@ -90,6 +93,7 @@ public class OtimizadorCodigo {
     public List<Instrucao3AC> propagarConstantes(List<Instrucao3AC> instrucoes) {
         List<Instrucao3AC> resultado = new ArrayList<>();
         HashMap<String, String> constantes = new HashMap<>();
+        HashSet<String> variaveisModificadasEmLoop = variaveisModificadas(instrucoes);
 
         for (Instrucao3AC inst : instrucoes) {
             if (inst.tipo == TipoInstrucao.ROTULO) {
@@ -98,7 +102,8 @@ public class OtimizadorCodigo {
 
             if (inst.tipo == TipoInstrucao.CHAMADA_READ) {
                 resultado.add(inst);
-                constantes.remove(inst.operando1);
+                if (inst.operando1 != null) constantes.remove(inst.operando1);
+                if (inst.destino != null) constantes.remove(inst.destino);
                 continue;
             }
 
@@ -107,7 +112,7 @@ public class OtimizadorCodigo {
             Instrucao3AC nova = new Instrucao3AC(inst.tipo, inst.destino, novoOp1, novoOp2, inst.operador);
 
             if (nova.tipo == TipoInstrucao.ATRIBUICAO) {
-                if (isNumero(nova.operando1)) {
+                if (isNumero(nova.operando1) && !variaveisModificadasEmLoop.contains(nova.destino)) {
                     constantes.put(nova.destino, nova.operando1);
                 } else {
                     constantes.remove(nova.destino);
@@ -146,20 +151,31 @@ public class OtimizadorCodigo {
     }
 
     public List<Instrucao3AC> eliminarCodigoMorto(List<Instrucao3AC> instrucoes) {
-        HashSet<String> usados = coletarUsados(instrucoes);
+        List<Instrucao3AC> resultado = instrucoes;
 
-        List<Instrucao3AC> resultado = new ArrayList<>();
-        for (Instrucao3AC inst : instrucoes) {
-            if (codigoMorto(inst, usados)) {
-                continue;
+        while (true) {
+            HashSet<String> usados = coletarUsados(resultado);
+
+            List<Instrucao3AC> novoResultado = new ArrayList<>();
+            for (Instrucao3AC inst : resultado) {
+                if (codigoMorto(inst, usados)) {
+                    continue;
+                }
+                novoResultado.add(inst);
             }
-            resultado.add(inst);
+
+            if (novoResultado.size() == resultado.size()) {
+                break;
+            }
+
+            resultado = novoResultado;
         }
+
         return resultado;
     }
 
     private String substituirSeConstante(String operando, HashMap<String, String> constantes) {
-        if (constantes.containsKey(operando)) {
+        if (operando != null && constantes.containsKey(operando)) {
             return constantes.get(operando);
         }
         return operando;
@@ -177,42 +193,42 @@ public class OtimizadorCodigo {
     }
 
     private Instrucao3AC tentarSimplificar(Instrucao3AC inst) {
-        if (inst.tipo != TipoInstrucao.OPERACAO) {
+        if (inst.tipo != TipoInstrucao.OPERACAO || inst.operador == null) {
             return inst;
         }
 
         if (inst.operador.equals("+")) {
-            if (inst.operando2.equals("0")) {
+            if ("0".equals(inst.operando2)) {
                 return new Instrucao3AC(TipoInstrucao.ATRIBUICAO, inst.destino, inst.operando1, null, null);
             }
-            if (inst.operando1.equals("0")) {
+            if ("0".equals(inst.operando1)) {
                 return new Instrucao3AC(TipoInstrucao.ATRIBUICAO, inst.destino, inst.operando2, null, null);
             }
         }
 
         if (inst.operador.equals("-")) {
-            if (inst.operando2.equals("0")) {
+            if ("0".equals(inst.operando2)) {
                 return new Instrucao3AC(TipoInstrucao.ATRIBUICAO, inst.destino, inst.operando1, null, null);
             }
         }
 
         if (inst.operador.equals("*")) {
-            if (inst.operando2.equals("0")) {
+            if ("0".equals(inst.operando2)) {
                 return new Instrucao3AC(TipoInstrucao.ATRIBUICAO, inst.destino, "0", null, null);
             }
-            if (inst.operando1.equals("0")) {
+            if ("0".equals(inst.operando1)) {
                 return new Instrucao3AC(TipoInstrucao.ATRIBUICAO, inst.destino, "0", null, null);
             }
-            if (inst.operando2.equals("1")) {
+            if ("1".equals(inst.operando2)) {
                 return new Instrucao3AC(TipoInstrucao.ATRIBUICAO, inst.destino, inst.operando1, null, null);
             }
-            if (inst.operando1.equals("1")) {
+            if ("1".equals(inst.operando1)) {
                 return new Instrucao3AC(TipoInstrucao.ATRIBUICAO, inst.destino, inst.operando2, null, null);
             }
         }
 
         if (inst.operador.equals("/")) {
-            if (inst.operando2.equals("1")) {
+            if ("1".equals(inst.operando2)) {
                 return new Instrucao3AC(TipoInstrucao.ATRIBUICAO, inst.destino, inst.operando1, null, null);
             }
         }
@@ -220,4 +236,36 @@ public class OtimizadorCodigo {
         return inst;
     }
 
+    private HashSet<String> variaveisModificadas(List<Instrucao3AC> instrucoes) {
+        HashSet<String> modificadas = new HashSet<>();
+        HashMap<String, Integer> posicoesRotulos = new HashMap<>();
+
+        for (int i = 0; i < instrucoes.size(); i++) {
+            Instrucao3AC inst = instrucoes.get(i);
+            if (inst.tipo == TipoInstrucao.ROTULO && inst.destino != null) {
+                posicoesRotulos.put(inst.destino, i);
+            }
+        }
+        for (int i = 0; i < instrucoes.size(); i++) {
+            Instrucao3AC inst = instrucoes.get(i);
+            String rotuloAlvo = null;
+
+            if (posicoesRotulos.containsKey(inst.destino)) rotuloAlvo = inst.destino;
+            else if (posicoesRotulos.containsKey(inst.operando1)) rotuloAlvo = inst.operando1;
+            else if (posicoesRotulos.containsKey(inst.operando2)) rotuloAlvo = inst.operando2;
+
+            if (rotuloAlvo != null) {
+                int inicioLoop = posicoesRotulos.get(rotuloAlvo);
+                if (inicioLoop < i) {
+                    for (int j = inicioLoop; j <= i; j++) {
+                        Instrucao3AC instLoop = instrucoes.get(j);
+                        if (instLoop.destino != null && !posicoesRotulos.containsKey(instLoop.destino)) {
+                            modificadas.add(instLoop.destino);
+                        }
+                    }
+                }
+            }
+        }
+        return modificadas;
+    }
 }
