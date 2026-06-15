@@ -96,10 +96,6 @@ public class OtimizadorCodigo {
         HashSet<String> variaveisModificadasEmLoop = variaveisModificadas(instrucoes);
 
         for (Instrucao3AC inst : instrucoes) {
-            if (inst.tipo == TipoInstrucao.ROTULO) {
-                constantes.clear();
-            }
-
             if (inst.tipo == TipoInstrucao.CHAMADA_READ) {
                 resultado.add(inst);
                 if (inst.operando1 != null) constantes.remove(inst.operando1);

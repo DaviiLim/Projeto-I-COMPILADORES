@@ -96,14 +96,19 @@ public class GeradorAssembly {
             } else if (inst.tipo == TipoInstrucao.OPERACAO) {
                 if (inst.operador.equals("-") && inst.operando1.equals("1")) {
                     SimboloEntrada simOp2 = tabelaGlobal.buscar(inst.operando2);
+                    SimboloEntrada simDestNeg = tabelaGlobal.buscar(inst.destino);
                     if (simOp2 != null && simOp2.getTipo() == TipoSimbolo.BOOLEAN) {
                         sb.append("mov al, 1\n");
                         sb.append("sub al, byte ptr [" + inst.operando2 + "]\n");
-                        sb.append("mov byte ptr [" + inst.destino + "], al\n");
+                        if (simDestNeg != null && simDestNeg.getTipo() == TipoSimbolo.BOOLEAN) {
+                            sb.append("mov byte ptr [" + inst.destino + "], al\n");
+                        } else {
+                            sb.append("movzx ax, al\n");
+                            sb.append("mov word ptr [" + inst.destino + "], ax\n");
+                        }
                         continue;
                     }
                 }
-
                 if (isNumero(inst.operando1)) {
                     sb.append("mov ax, " + inst.operando1 + "\n");
                 } else {
@@ -184,7 +189,12 @@ public class GeradorAssembly {
                 }
             } else if (inst.tipo == TipoInstrucao.CHAMADA_READ) {
                 sb.append("call _read_integer\n");
-                sb.append("mov word ptr [" + inst.operando1 + "], ax\n");
+                SimboloEntrada simRead = tabelaGlobal.buscar(inst.operando1);
+                if (simRead != null && simRead.getTipo() == TipoSimbolo.BOOLEAN) {
+                    sb.append("mov byte ptr [" + inst.operando1 + "], al\n");
+                } else {
+                    sb.append("mov word ptr [" + inst.operando1 + "], ax\n");
+                }
             } else if (inst.tipo == TipoInstrucao.CHAMADA_WRITE) {
                 if (inst.operando1.startsWith("\"")) {
                     String label = strings.get(inst.operando1);
