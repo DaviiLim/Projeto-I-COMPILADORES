@@ -1,6 +1,5 @@
-PROGRAM teste;
-VAR x : INTEGER;
+PROGRAM Teste3;
+VAR x, y : INTEGER;
 BEGIN
-    READ(x);
-    WRITE(x, "resultado")
+    y := x * 1
 END.

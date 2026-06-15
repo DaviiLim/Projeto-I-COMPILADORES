@@ -4,9 +4,11 @@ import org.example.enums.TipoSimbolo;
 
 public class Semantica extends NemesisBaseVisitor<TipoSimbolo> {
     private TabelaSimbolos tabelaAtual;
+    private TabelaSimbolos tabelaGlobal;
 
     public Semantica() {
         this.tabelaAtual = new TabelaSimbolos(null);
+        this.tabelaGlobal = this.tabelaAtual;
     }
 
     private void erroSemantico(String mensagem) {
@@ -206,5 +208,21 @@ public class Semantica extends NemesisBaseVisitor<TipoSimbolo> {
             erroSemantico("IF deve ser BOOLEAN");
         }
         return visitChildren(ctx);
+    }
+
+    public TabelaSimbolos getTabelaAtual() {
+        return tabelaAtual;
+    }
+
+    public void setTabelaAtual(TabelaSimbolos tabelaAtual) {
+        this.tabelaAtual = tabelaAtual;
+    }
+
+    public TabelaSimbolos getTabelaGlobal() {
+        return tabelaGlobal;
+    }
+
+    public void setTabelaGlobal(TabelaSimbolos tabelaGlobal) {
+        this.tabelaGlobal = tabelaGlobal;
     }
 }
