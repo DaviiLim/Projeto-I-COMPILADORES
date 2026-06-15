@@ -96,6 +96,12 @@ public class OtimizadorCodigo {
                 constantes.clear();
             }
 
+            if (inst.tipo == TipoInstrucao.CHAMADA_READ) {
+                resultado.add(inst);
+                constantes.remove(inst.operando1);
+                continue;
+            }
+
             String novoOp1 = substituirSeConstante(inst.operando1, constantes);
             String novoOp2 = substituirSeConstante(inst.operando2, constantes);
             Instrucao3AC nova = new Instrucao3AC(inst.tipo, inst.destino, novoOp1, novoOp2, inst.operador);
@@ -106,8 +112,6 @@ public class OtimizadorCodigo {
                 } else {
                     constantes.remove(nova.destino);
                 }
-            } else if (nova.tipo == TipoInstrucao.CHAMADA_READ) {
-                constantes.remove(nova.operando1);
             } else if (nova.destino != null) {
                 constantes.remove(nova.destino);
             }

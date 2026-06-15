@@ -84,6 +84,10 @@ public class Semantica extends NemesisBaseVisitor<TipoSimbolo> {
             return TipoSimbolo.BOOLEAN;
         }
 
+        if (ctx.CADEIA() != null) {
+            return TipoSimbolo.STRING;
+        }
+
         if (ctx.expr() != null) {
             return visit(ctx.expr());
         }

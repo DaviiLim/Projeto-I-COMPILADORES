@@ -1,5 +1,81 @@
-PROGRAM Teste3;
-VAR x, y : INTEGER;
-BEGIN
-    y := x * 1
-END.
+program testeCompleto;
+
+var
+   a, b, c, i : integer;
+   flag, terminou : boolean;
+   nome, situacao : string;
+
+begin
+   nome := "Davi";
+   situacao := "iniciando";
+
+   a := 10;
+   b := 5;
+   c := 0;
+
+   flag := true;
+   terminou := false;
+
+   read(c);
+
+   if a > b then
+      situacao := "a maior que b"
+   else
+      situacao := "b maior ou igual a a";
+
+   write("Situacao:");
+   write(situacao);
+
+   i := 0;
+
+   while i < c do
+      begin
+         i := i + 1;
+
+         if i <= 3 then
+            write("pequeno")
+         else
+            write("grande");
+
+         write(i);
+
+         a := a + 1;
+         b := b * 2;
+
+         write(a);
+         write(b)
+      end;
+
+   flag := a == b;
+   write(flag);
+
+   flag := a <> b;
+   write(flag);
+
+   flag := a >= b;
+   write(flag);
+
+   flag := a <= b;
+   write(flag);
+
+   flag := (a > b) and true;
+   write(flag);
+
+   flag := (a < b) or false;
+   write(flag);
+
+   if ~terminou then
+      write("Nao terminou")
+   else
+      write("Terminou");
+
+   c := a + b * 2;
+   write(c);
+
+   c := (a + b) * 2;
+   write(c);
+
+   write(nome);
+
+   write("Fim do programa")
+end.

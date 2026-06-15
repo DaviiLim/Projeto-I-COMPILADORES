@@ -93,7 +93,12 @@ public class Main {
         HashMap<String, SimboloEntrada> simbolos = global.getTabelaSimbolo();
 
         GeradorAssembly geradorAsm = new GeradorAssembly();
-        StringBuilder dados = geradorAsm.gerarSecaoDados(semantica.getTabelaGlobal());
+        HashMap<String, String> strings = geradorAsm.coletarStrings(semCodigoMorto);
+
+        StringBuilder dados = geradorAsm.gerarSecaoDados(semantica.getTabelaGlobal(), strings);
         System.out.println(dados);
+
+        StringBuilder codigoAsm = geradorAsm.gerarSecaoCodigo(semCodigoMorto, strings, semantica.getTabelaGlobal());
+        System.out.println(codigoAsm);
     }
 }

@@ -41,6 +41,10 @@ public class GeradorCodigo extends NemesisBaseVisitor<String> {
             return "0";
         }
 
+        if (ctx.CADEIA() != null) {
+            return ctx.CADEIA().getText();
+        }
+
         if (ctx.expr() != null) {
             return visit(ctx.expr());
         }
@@ -57,6 +61,18 @@ public class GeradorCodigo extends NemesisBaseVisitor<String> {
         }
 
         return null;
+    }
+
+    @Override
+    public String visitExpr(NemesisParser.ExprContext ctx) {
+        if (ctx.OPLOG() != null) {
+            String esquerdo = visit(ctx.expr());
+            String direito = visit(ctx.exprOprel());
+            String temp = novoTemp();
+            instrucoes.add(new Instrucao3AC(TipoInstrucao.OPERACAO, temp, esquerdo, direito, ctx.OPLOG().getText()));
+            return temp;
+        }
+        return visit(ctx.exprOprel());
     }
 
     @Override
@@ -217,8 +233,11 @@ public class GeradorCodigo extends NemesisBaseVisitor<String> {
             instrucoes.add(new Instrucao3AC(TipoInstrucao.CHAMADA_WRITE, null, resultado, null, null));
         }
 
+
         if (ctx.listW() != null) {
             percorreListW(ctx.listW());
         }
+
+
     }
 }
